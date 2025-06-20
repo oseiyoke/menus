@@ -37,9 +37,9 @@ export function DayEditView({
   // Get meals for current day
   const dayEntries = menuEntries.filter(entry => entry.date === dateStr);
   const meals = {
-    breakfast: dayEntries.find(e => e.meal_type === 'breakfast')?.meal || null,
-    lunch: dayEntries.find(e => e.meal_type === 'lunch')?.meal || null,
-    dinner: dayEntries.find(e => e.meal_type === 'dinner')?.meal || null,
+    breakfast: dayEntries.find(e => e.meal_type === 'breakfast')?.meal,
+    lunch: dayEntries.find(e => e.meal_type === 'lunch')?.meal,
+    dinner: dayEntries.find(e => e.meal_type === 'dinner')?.meal,
   };
 
   // Hook for performing upsert on the server

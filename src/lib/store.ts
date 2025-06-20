@@ -8,6 +8,8 @@ interface MenuStore {
   currentWeek: number;
   currentDay: number;
   selectedMealSlot: { dayIndex: number; mealType: MealType } | null;
+  // Edit mode state
+  editMode: boolean;
 
   // Actions
   setMenu: (menu: Menu) => void;
@@ -16,6 +18,7 @@ interface MenuStore {
   switchWeek: (week: number) => void;
   setCurrentDay: (day: number) => void;
   setSelectedMealSlot: (slot: { dayIndex: number; mealType: MealType } | null) => void;
+  toggleEditMode: () => void;
   clearMenu: () => void;
 }
 
@@ -25,6 +28,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
   currentWeek: 0,
   currentDay: 0,
   selectedMealSlot: null,
+  editMode: false,
 
   setMenu: (menu) => set({ currentMenu: menu }),
 
@@ -78,13 +82,13 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
     set({ menuEntries: updatedEntries });
   },
 
-
-
   switchWeek: (week) => set({ currentWeek: week }),
 
   setCurrentDay: (day) => set({ currentDay: day }),
 
   setSelectedMealSlot: (slot) => set({ selectedMealSlot: slot }),
+
+  toggleEditMode: () => set((state) => ({ editMode: !state.editMode })),
 
   clearMenu: () => set({
     currentMenu: null,
@@ -92,5 +96,6 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
     currentWeek: 0,
     currentDay: 0,
     selectedMealSlot: null,
+    editMode: false,
   }),
 })); 
