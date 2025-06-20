@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Mint Cream Theme - Primary Colors */
+    --color-primary-50: #f6faf7;
+    --color-primary-100: #edf5ef;
+    --color-primary-200: #d4e8d7;
+    --color-primary-300: #b0d6b6;
+    --color-primary-400: #86c190;
+    --color-primary-500: #63ad6e;
+
+    /* Accent Colors - Soft Peach */
+    --color-accent-50: #fef8f5;
+    --color-accent-100: #fdeee6;
+    --color-accent-200: #fad5c0;
+    --color-accent-300: #f5b899;
+    --color-accent-400: #f0956b;
+
+    /* Surface Colors - Warm Neutrals */
+    --color-surface-50: #fefefe;
+    --color-surface-100: #fdfcf9;
+    --color-surface-200: #f8f6f1;
+
+    /* Meal Type Colors */
+    --color-breakfast: #f0956b; /* Warm peach for breakfast */
+    --color-lunch: #86c190;     /* Primary mint for lunch */
+    --color-dinner: #b8a9d9;    /* Soft lavender for dinner */
+    --color-snack: #f5d576;     /* Warm yellow for snacks */
+
+    /* Semantic colors for backward compatibility */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  /* Alternative theme - Peach Dream (easily switchable) */
+  [data-theme="peach"] {
+    --color-primary-50: #fef7f3;
+    --color-primary-100: #fdeee6;
+    --color-primary-200: #fbd5c0;
+    --color-primary-300: #f8b894;
+    --color-primary-400: #f5956b;
+    --color-primary-500: #f2744a;
+
+    --color-accent-50: #fffef7;
+    --color-accent-100: #fefcf0;
+    --color-accent-200: #fef8e1;
+    --color-accent-300: #fdf1c7;
+    --color-accent-400: #fae5a3;
+  }
+
+  /* Global styles */
+  * {
+    @apply border-input;
+  }
+  
+  body {
+    @apply bg-surface-50 text-foreground;
+  }
+} 

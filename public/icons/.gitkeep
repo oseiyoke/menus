@@ -1,0 +1,27 @@
+# PWA Icons Directory
+
+This directory should contain the following icon files generated from favicon.svg:
+
+## Required Icons:
+- icon-72x72.png
+- icon-96x96.png  
+- icon-128x128.png
+- icon-144x144.png
+- icon-152x152.png
+- icon-192x192.png
+- icon-384x384.png
+- icon-512x512.png
+- maskable-icon-192x192.png
+- maskable-icon-512x512.png
+
+## Generation Instructions:
+1. Use the existing favicon.svg as the source
+2. Generate PNG versions at the required sizes
+3. For maskable icons, ensure the design fits within the safe area
+4. Test icons on different platforms to ensure quality
+
+## Tools for Icon Generation:
+- PWA Builder (online)
+- RealFaviconGenerator
+- ImageMagick (command line)
+- Figma/Sketch export 

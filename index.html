@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Screen Management */
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            background: #f5f5f5;
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        /* Landing Page */
+        .landing-screen {
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+        
+        .landing-content {
+            text-align: center;
+            padding: 40px;
+            max-width: 400px;
+        }
+        
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+        }
+        
+        .landing-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+        
+        .landing-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 48px;
+            line-height: 1.5;
+        }
+        
+        .primary-button {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 280px;
+        }
+        
+        .primary-button:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+        
+        /* Period Selection */
+        .period-screen {
+            background: white;
+        }
+        
+        .screen-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .back-button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .back-button:hover {
+            background: #e5e5e5;
+        }
+        
+        .screen-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .period-options {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .period-option {
+            padding: 20px;
+            background: #f9f9f9;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .period-option:hover {
+            background: #f0f0f0;
+            border-color: #ddd;
+        }
+        
+        .period-option.selected {
+            background: #f0f9ff;
+            border-color: #0066cc;
+        }
+        
+        .period-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .period-info p {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .radio-circle {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .period-option.selected .radio-circle {
+            border-color: #0066cc;
+        }
+        
+        .period-option.selected .radio-circle::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #0066cc;
+            border-radius: 50%;
+        }
+        
+        .continue-button {
+            margin: 24px;
+            margin-top: auto;
+        }
+        
+        /* Menu Overview (Week View) */
+        .overview-header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .overview-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .menu-name-input {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            background: transparent;
+            border: none;
+            outline: none;
+            flex: 1;
+        }
+        
+        .menu-name-input:disabled {
+            color: #1a1a1a;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .icon-button {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .icon-button:hover {
+            background: #e5e5e5;
+        }
+        
+        .icon-button.active {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .date-range {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .week-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 16px;
+            background: white;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .week-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .week-tab {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .week-tab.active {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .week-grid {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .week-day-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .week-day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .week-day-card.edit-mode {
+            cursor: default;
+        }
+        
+        .week-day-card.edit-mode:hover {
+            transform: none;
+        }
+        
+        .delete-day {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: #fee;
+            border: none;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #d32f2f;
+        }
+        
+        .edit-mode .delete-day {
+            display: flex;
+        }
+        
+        .week-day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .week-day-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .week-day-date {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .week-meals-preview {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .week-meal-indicator {
+            flex: 1;
+            height: 40px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #999;
+            overflow: hidden;
+            padding: 0 8px;
+        }
+        
+        .week-meal-indicator.has-meal {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .save-button {
+            margin: 16px;
+            margin-top: auto;
+        }
+        
+        /* Day View */
+        .day-view {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .day-header {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .day-info {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .day-info h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+        }
+        
+        .date-indicator {
+            font-size: 14px;
+            color: #999;
+            margin-top: 4px;
+        }
+        
+        .meals-container {
+            flex: 1;
+            background: white;
+            margin: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .meal-slot {
+            flex: 1;
+            border-bottom: 1.5px solid #e5e5e5;
+            padding: 20px 30px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .meal-slot:last-child {
+            border-bottom: none;
+        }
+        
+        .meal-slot:hover {
+            background-color: #fafafa;
+        }
+        
+        .meal-slot.has-meal {
+            background-color: #fcfcfc;
+        }
+        
+        .meal-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+        
+        .meal-placeholder {
+            color: #c0c0c0;
+            font-size: 16px;
+            font-weight: 300;
+        }
+        
+        .meal-item {
+            text-align: center;
+            width: 100%;
+        }
+        
+        .meal-name {
+            font-size: 18px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .meal-details {
+            font-size: 14px;
+            color: #666;
+            font-weight: 300;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            padding: 16px 20px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: #f5f5f5;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-button:hover {
+            background: #e5e5e5;
+        }
+        
+        .nav-button svg {
+            width: 24px;
+            height: 24px;
+            stroke: #666;
+        }
+        
+        .day-indicator {
+            font-size: 14px;
+            color: #999;
+            font-weight: 500;
+        }
+        
+        /* Bottom Sheet Modal */
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 100;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .bottom-sheet.active {
+            transform: translateY(0);
+        }
+        
+        .sheet-handle {
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .handle-bar {
+            width: 48px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+        }
+        
+        .sheet-header {
+            padding: 0 20px 16px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+        }
+        
+        .search-bar {
+            margin-top: 12px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .sheet-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 99;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Meal options in modal */
+        .meal-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .meal-option {
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .meal-option:hover {
+            background: #f0f0f0;
+        }
+        
+        .meal-option-name {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .meal-option-details {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Share Screen */
+        .share-content {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #e8f5e9;
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 32px;
+        }
+        
+        .share-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        
+        .share-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .link-container {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 32px;
+        }
+        
+        .link-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .link-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .link-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: #f5f5f5;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        
+        .copy-button {
+            padding: 12px 20px;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .copy-button:hover {
+            background: #333;
+        }
+        
+        .done-button {
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Screen -->
+    <div id="landingScreen" class="screen landing-screen active">
+        <div class="landing-content">
+            <div class="app-logo">🍽️</div>
+            <h1 class="landing-title">Menu Planner</h1>
+            <p class="landing-subtitle">Plan your meals for the week with ease. Create, organize, and share your menu in minutes.</p>
+            <button class="primary-button" id="createMenuBtn">Create Menu</button>
+        </div>
+    </div>
+
+    <!-- Period Selection Screen -->
+    <div id="periodScreen" class="screen period-screen">
+        <div class="screen-header">
+            <button class="back-button" onclick="showScreen('landingScreen')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+            <h2 class="screen-title">Select Period</h2>
+        </div>
+        
+        <div class="period-options">
+            <div class="period-option" onclick="selectPeriod(1, this)">
+                <div class="period-info">
+                    <h3>1 Week</h3>
+                    <p>Perfect for weekly meal planning</p>
+                </div>
+                <div class="radio-circle"></div>
+            </div>
+            
+            <div class="period-option" onclick="selectPeriod(2, this)">
+                <div class="period-info">
+                    <h3>2 Weeks</h3>
+                    <p>Plan ahead for the next fortnight</p>
+                </div>
+                <div class="radio-circle"></div>
+            </div>
+            
+            <div class="period-option" onclick="selectPeriod(3, this)">
+                <div class="period-info">
+                    <h3>3 Weeks</h3>
+                    <p>Extended planning for busy schedules</p>
+                </div>
+                <div class="radio-circle"></div>
+            </div>
+            
+            <div class="period-option" onclick="selectPeriod(4, this)">
+                <div class="period-info">
+                    <h3>4 Weeks</h3>
+                    <p>Complete monthly meal planning</p>
+                </div>
+                <div class="radio-circle"></div>
+            </div>
+        </div>
+        
+        <button class="primary-button continue-button" onclick="createMenu()" disabled>Continue</button>
+    </div>
+
+    <!-- Menu Overview Screen -->
+    <div id="overviewScreen" class="screen">
+        <div class="overview-header">
+            <div class="overview-title">
+                <input type="text" class="menu-name-input" placeholder="Menu Name" id="menuNameInput" disabled>
+                <div class="action-buttons">
+                    <button class="icon-button" id="editModeButton" onclick="toggleEditMode()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-button" onclick="showScreen('shareScreen')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <p class="date-range" id="dateRange">December 15 - December 21</p>
+        </div>
+        
+        <div class="week-tabs" id="weekTabs">
+            <button class="week-tab active" onclick="selectWeek(0)">Week 1</button>
+        </div>
+        
+        <div class="week-grid" id="overviewGrid">
+            <!-- Week cards will be inserted here -->
+        </div>
+        
+        <button class="primary-button save-button" onclick="saveMenu()" style="display: none;">Save Changes</button>
+    </div>
+
+    <!-- Day View Screen -->
+    <div id="dayScreen" class="screen">
+        <div class="day-header">
+            <button class="back-button" onclick="showScreen('overviewScreen')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+            <div class="day-info">
+                <h1 id="currentDay">Wednesday</h1>
+    
+            </div>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="meals-container" id="mealsContainer">
+            <!-- Meal slots will be inserted here -->
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-button" onclick="previousDay()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+            <span class="day-indicator" id="dayIndicator">3 of 7</span>
+            <button class="nav-button" onclick="nextDay()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 18l6-6-6-6" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Share Screen -->
+    <div id="shareScreen" class="screen">
+        <div class="screen-header">
+            <button class="back-button" onclick="showScreen('overviewScreen')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </button>
+            <h2 class="screen-title">Share Menu</h2>
+        </div>
+        
+        <div class="share-content">
+            <div class="success-icon">✓</div>
+            <h2 class="share-title">Menu Saved!</h2>
+            <p class="share-subtitle">Your menu has been saved. Share it with anyone using the links below.</p>
+            
+            <div class="link-container">
+                <p class="link-label">View-only link</p>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" value="menuapp.com/m/abc123" readonly>
+                    <button class="copy-button" onclick="copyLink(this)">Copy</button>
+                </div>
+                
+                <p class="link-label">Edit link</p>
+                <div class="link-input-group">
+                    <input type="text" class="link-input" value="menuapp.com/m/abc123/edit" readonly>
+                    <button class="copy-button" onclick="copyLink(this)">Copy</button>
+                </div>
+            </div>
+            
+            <button class="primary-button done-button" onclick="showScreen('landingScreen')">Create Another Menu</button>
+        </div>
+    </div>
+
+    <!-- Bottom Sheet Modal -->
+    <div class="overlay" id="overlay" onclick="closeMealModal()"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+        <div class="sheet-handle">
+            <div class="handle-bar"></div>
+        </div>
+        <div class="sheet-header">
+            <h2 class="sheet-title" id="sheetTitle">Select Meal</h2>
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search meals..." onkeyup="searchMeals(this.value)">
+            </div>
+        </div>
+        <div class="sheet-content">
+            <div class="meal-options" id="mealOptions">
+                <!-- Meal options will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let selectedPeriod = 0;
+        let currentScreen = 'landingScreen';
+        let currentDayIndex = 0;
+        let currentWeek = 0;
+        let selectedMealSlot = null;
+        let editMode = false;
+        let menuData = {};
+        
+        // Days of the week
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        
+        // Sample meals for selection
+        const availableMeals = [
+            { name: 'Grilled Chicken Salad', details: 'Fresh greens with grilled chicken breast' },
+            { name: 'Vegetable Stir Fry', details: 'Colorful vegetables with soy sauce' },
+            { name: 'Pasta Carbonara', details: 'Classic Italian pasta with bacon and eggs' },
+            { name: 'Overnight Oats', details: 'Healthy breakfast with fruits and nuts' },
+            { name: 'Fish Tacos', details: 'Grilled fish with fresh salsa' },
+            { name: 'Greek Yogurt Bowl', details: 'Yogurt with granola and berries' },
+            { name: 'Turkey Sandwich', details: 'Whole wheat bread with turkey and veggies' },
+            { name: 'Scrambled Eggs', details: 'Fluffy eggs with herbs' },
+            { name: 'Quinoa Buddha Bowl', details: 'Nutritious grain bowl with vegetables' },
+            { name: 'Chicken Caesar Wrap', details: 'Classic Caesar in a tortilla' },
+            { name: 'Smoothie Bowl', details: 'Blended fruits with toppings' },
+            { name: 'Beef Tacos', details: 'Seasoned ground beef with toppings' }
+        ];
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up create menu button
+            document.getElementById('createMenuBtn').addEventListener('click', function() {
+                showScreen('periodScreen');
+            });
+            
+            // Initialize menu data structure
+            initializeMenuData();
+        });
+        
+        // Initialize menu data
+        function initializeMenuData() {
+            menuData = {
+                name: '',
+                weeks: 1,
+                startDate: new Date(),
+                days: []
+            };
+        }
+        
+        // Screen navigation
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenId).classList.add('active');
+            currentScreen = screenId;
+            
+            // Handle screen-specific logic
+            if (screenId === 'overviewScreen') {
+                renderOverviewScreen();
+            } else if (screenId === 'dayScreen') {
+                renderDayScreen();
+            } else if (screenId === 'shareScreen') {
+                // Generate mock share links
+                generateShareLinks();
+            }
+        }
+        
+        // Period selection
+        function selectPeriod(weeks, element) {
+            selectedPeriod = weeks;
+            
+            // Update UI
+            document.querySelectorAll('.period-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            // Enable continue button
+            document.querySelector('.continue-button').disabled = false;
+        }
+        
+        // Create menu
+        function createMenu() {
+            if (selectedPeriod === 0) return;
+            
+            // Initialize menu data
+            menuData.weeks = selectedPeriod;
+            menuData.startDate = new Date();
+            
+            // Create days array for the selected period
+            const totalDays = selectedPeriod * 7;
+            menuData.days = [];
+            
+            for (let i = 0; i < totalDays; i++) {
+                const date = new Date(menuData.startDate);
+                date.setDate(date.getDate() + i);
+                
+                menuData.days.push({
+                    date: date,
+                    dayName: days[date.getDay()],
+                    meals: {
+                        breakfast: null,
+                        lunch: null,
+                        dinner: null
+                    }
+                });
+            }
+            
+            // Generate default menu name
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            const month = monthNames[menuData.startDate.getMonth()];
+            menuData.name = `${month} Menu`;
+            
+            // Navigate to overview screen
+            showScreen('overviewScreen');
+        }
+        
+        // Render overview screen
+        function renderOverviewScreen() {
+            // Set menu name
+            document.getElementById('menuNameInput').value = menuData.name;
+            
+            // Update date range
+            const startDate = menuData.startDate;
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + (menuData.weeks * 7) - 1);
+            
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Show generic date range for recurring menus
+            const weeksText = menuData.weeks > 1 ? `${menuData.weeks} weeks • ` : '';
+            document.getElementById('dateRange').textContent = `${weeksText}Sunday - Saturday`;
+            
+            // Render week tabs
+            const weekTabs = document.getElementById('weekTabs');
+            weekTabs.innerHTML = '';
+            
+            for (let i = 0; i < menuData.weeks; i++) {
+                const tab = document.createElement('button');
+                tab.className = `week-tab ${i === currentWeek ? 'active' : ''}`;
+                tab.textContent = `Week ${i + 1}`;
+                tab.onclick = () => selectWeek(i);
+                weekTabs.appendChild(tab);
+            }
+            
+            // Render current week
+            renderWeek(currentWeek);
+        }
+        
+        // Select week
+        function selectWeek(weekIndex) {
+            currentWeek = weekIndex;
+            
+            // Update tabs
+            document.querySelectorAll('.week-tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === weekIndex);
+            });
+            
+            // Render selected week
+            renderWeek(weekIndex);
+        }
+        
+        // Render week view
+        function renderWeek(weekIndex) {
+            const grid = document.getElementById('overviewGrid');
+            grid.innerHTML = '';
+            
+            const startIndex = weekIndex * 7;
+            const endIndex = startIndex + 7;
+            
+            for (let i = startIndex; i < endIndex && i < menuData.days.length; i++) {
+                const day = menuData.days[i];
+                const card = createDayCard(day, i);
+                grid.appendChild(card);
+            }
+        }
+        
+        // Create day card for overview
+        function createDayCard(day, index) {
+            const card = document.createElement('div');
+            card.className = `week-day-card ${editMode ? 'edit-mode' : ''}`;
+            
+            // Delete button for edit mode
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-day';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteDay(index);
+            };
+            
+            const header = document.createElement('div');
+            header.className = 'week-day-header';
+            
+            const dayName = document.createElement('div');
+            dayName.className = 'week-day-name';
+            dayName.textContent = day.dayName;
+            
+            // Remove specific date display for recurring menus
+            header.appendChild(dayName);
+            
+            const mealsPreview = document.createElement('div');
+            mealsPreview.className = 'week-meals-preview';
+            
+            ['breakfast', 'lunch', 'dinner'].forEach(mealType => {
+                const indicator = document.createElement('div');
+                indicator.className = `week-meal-indicator ${day.meals[mealType] ? 'has-meal' : ''}`;
+                indicator.textContent = day.meals[mealType] ? 
+                    day.meals[mealType].name.substring(0, 10) + '...' : 
+                    mealType.charAt(0).toUpperCase();
+                mealsPreview.appendChild(indicator);
+            });
+            
+            card.appendChild(deleteBtn);
+            card.appendChild(header);
+            card.appendChild(mealsPreview);
+            
+            // Click handler only when not in edit mode
+            if (!editMode) {
+                card.onclick = () => {
+                    currentDayIndex = index;
+                    showScreen('dayScreen');
+                };
+            }
+            
+            return card;
+        }
+        
+        // Format date
+        function formatDate(date) {
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${monthNames[date.getMonth()]} ${date.getDate()}`;
+        }
+        
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            
+            // Update button state
+            document.getElementById('editModeButton').classList.toggle('active', editMode);
+            
+            // Update menu name input
+            document.getElementById('menuNameInput').disabled = !editMode;
+            
+            // Show/hide save button
+            document.querySelector('.save-button').style.display = editMode ? 'block' : 'none';
+            
+            // Re-render current week
+            renderWeek(currentWeek);
+        }
+        
+        // Delete day
+        function deleteDay(index) {
+            // Clear all meals for that day
+            menuData.days[index].meals = {
+                breakfast: null,
+                lunch: null,
+                dinner: null
+            };
+            
+            // Re-render
+            renderWeek(currentWeek);
+        }
+        
+        // Save menu
+        function saveMenu() {
+            // Update menu name
+            menuData.name = document.getElementById('menuNameInput').value;
+            
+            // Exit edit mode
+            toggleEditMode();
+            
+            // Show success message (could be a toast)
+            alert('Menu saved successfully!');
+        }
+        
+        // Render day screen
+        function renderDayScreen() {
+            const day = menuData.days[currentDayIndex];
+            
+            // Update header - show only day name for recurring menus
+            document.getElementById('currentDay').textContent = day.dayName;
+            
+            // Update day indicator
+            document.getElementById('dayIndicator').textContent = 
+                `${(currentDayIndex % 7) + 1} of 7`;
+            
+            // Render meals
+            const container = document.getElementById('mealsContainer');
+            container.innerHTML = '';
+            
+            ['breakfast', 'lunch', 'dinner'].forEach(mealType => {
+                const slot = createMealSlot(mealType, day.meals[mealType]);
+                container.appendChild(slot);
+            });
+        }
+        
+        // Format full date
+        function formatFullDate(date) {
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${monthNames[date.getMonth()]} ${date.getDate()}`;
+        }
+        
+        // Create meal slot
+        function createMealSlot(mealType, meal) {
+            const slot = document.createElement('div');
+            slot.className = `meal-slot ${meal ? 'has-meal' : ''}`;
+            slot.onclick = () => openMealModal(mealType);
+            
+            const content = document.createElement('div');
+            content.className = 'meal-content';
+            
+            if (meal) {
+                const mealItem = document.createElement('div');
+                mealItem.className = 'meal-item';
+                
+                const mealName = document.createElement('div');
+                mealName.className = 'meal-name';
+                mealName.textContent = meal.name;
+                
+                const mealDetails = document.createElement('div');
+                mealDetails.className = 'meal-details';
+                mealDetails.textContent = meal.details;
+                
+                mealItem.appendChild(mealName);
+                mealItem.appendChild(mealDetails);
+                content.appendChild(mealItem);
+            } else {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'meal-placeholder';
+                placeholder.textContent = `Add ${mealType}`;
+                content.appendChild(placeholder);
+            }
+            
+            slot.appendChild(content);
+            return slot;
+        }
+        
+        // Navigate days
+        function previousDay() {
+            if (currentDayIndex > 0) {
+                currentDayIndex--;
+                
+                // Check if we need to switch weeks
+                if (currentDayIndex < currentWeek * 7) {
+                    currentWeek--;
+                }
+                
+                renderDayScreen();
+            }
+        }
+        
+        function nextDay() {
+            if (currentDayIndex < menuData.days.length - 1) {
+                currentDayIndex++;
+                
+                // Check if we need to switch weeks
+                if (currentDayIndex >= (currentWeek + 1) * 7) {
+                    currentWeek++;
+                }
+                
+                renderDayScreen();
+            }
+        }
+        
+        // Meal selection modal
+        function openMealModal(mealType) {
+            selectedMealSlot = mealType;
+            
+            // Update modal title
+            document.getElementById('sheetTitle').textContent = 
+                `Select ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}`;
+            
+            // Show modal
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('bottomSheet').classList.add('active');
+            
+            // Render meal options
+            renderMealOptions();
+        }
+        
+        function closeMealModal() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('bottomSheet').classList.remove('active');
+            
+            // Clear search
+            document.querySelector('.search-input').value = '';
+        }
+        
+        // Render meal options
+        function renderMealOptions(searchTerm = '') {
+            const container = document.getElementById('mealOptions');
+            container.innerHTML = '';
+            
+            const filtered = availableMeals.filter(meal => 
+                meal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                meal.details.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            filtered.forEach(meal => {
+                const option = document.createElement('div');
+                option.className = 'meal-option';
+                option.onclick = () => selectMeal(meal);
+                
+                const name = document.createElement('div');
+                name.className = 'meal-option-name';
+                name.textContent = meal.name;
+                
+                const details = document.createElement('div');
+                details.className = 'meal-option-details';
+                details.textContent = meal.details;
+                
+                option.appendChild(name);
+                option.appendChild(details);
+                container.appendChild(option);
+            });
+        }
+        
+        // Search meals
+        function searchMeals(term) {
+            renderMealOptions(term);
+        }
+        
+        // Select meal
+        function selectMeal(meal) {
+            // Update the data
+            menuData.days[currentDayIndex].meals[selectedMealSlot] = meal;
+            
+            // Close modal
+            closeMealModal();
+            
+            // Re-render day screen
+            renderDayScreen();
+        }
+        
+        // Share functionality
+        function generateShareLinks() {
+            // In a real app, this would generate actual shareable links
+            const baseUrl = 'menuapp.com/m/';
+            const menuId = Math.random().toString(36).substring(7);
+            
+            const viewLink = document.querySelectorAll('.link-input')[0];
+            const editLink = document.querySelectorAll('.link-input')[1];
+            
+            viewLink.value = baseUrl + menuId;
+            editLink.value = baseUrl + menuId + '/edit';
+        }
+        
+        function copyLink(button) {
+            const input = button.previousElementSibling;
+            input.select();
+            document.execCommand('copy');
+            
+            // Visual feedback
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
