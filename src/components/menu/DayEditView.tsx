@@ -82,16 +82,21 @@ export function DayEditView({
         backHref={backHref}
       />
 
-      {/* Meals Container (flex column so each slot is clickable) */}
-      <div className="flex flex-col flex-1 mx-4 my-5 bg-white rounded-2xl shadow-sm overflow-hidden divide-y divide-gray-100">
-        {(['breakfast', 'lunch', 'dinner'] as MealType[]).map((mealType) => (
-          <MealSlot
-            key={mealType}
-            mealType={mealType}
-            meal={meals[mealType]}
-            onClick={() => handleMealSlotClick(mealType)}
-          />
-        ))}
+      {/* Main content container with max width */}
+      <div className="flex-1 flex flex-col">
+        <div className="w-full max-w-2xl mx-auto flex-1 flex flex-col">
+          {/* Meals Container (flex column so each slot is clickable) */}
+          <div className="flex flex-col flex-1 mx-4 my-5 bg-white rounded-2xl shadow-sm overflow-hidden divide-y divide-gray-100">
+            {(['breakfast', 'lunch', 'dinner'] as MealType[]).map((mealType) => (
+              <MealSlot
+                key={mealType}
+                mealType={mealType}
+                meal={meals[mealType]}
+                onClick={() => handleMealSlotClick(mealType)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
       <DayNavigation

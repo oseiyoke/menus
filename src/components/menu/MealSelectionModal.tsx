@@ -101,6 +101,26 @@ export function MealSelectionModal({
 
         {/* Content */}
         <div className="flex-1 p-4 overflow-y-auto overscroll-contain">
+          {/* Create option always shown when user typed something */}
+          {showCreateOption && (
+            <button
+              onClick={handleCreateMeal}
+              disabled={createMealMutation.isPending}
+              className="w-full p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors shrink-0">
+                  <Plus className="w-4 h-4 text-blue-600" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-medium text-blue-900 truncate">
+                    {createMealMutation.isPending ? 'Creating...' : `Create "${searchTerm}"`}
+                  </h3>
+                  <p className="text-sm text-blue-600">Add this as a new meal</p>
+                </div>
+              </div>
+            </button>
+          )}
           {isLoading ? (
             <div className="text-center py-8 text-gray-500">Loading meals...</div>
           ) : (
@@ -136,26 +156,6 @@ export function MealSelectionModal({
                 </>
               )}
             </>
-          )}
-          {/* Create option always shown when user typed something */}
-          {showCreateOption && (
-            <button
-              onClick={handleCreateMeal}
-              disabled={createMealMutation.isPending}
-              className="w-full p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors text-left group disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors shrink-0">
-                  <Plus className="w-4 h-4 text-blue-600" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-medium text-blue-900 truncate">
-                    {createMealMutation.isPending ? 'Creating...' : `Create "${searchTerm}"`}
-                  </h3>
-                  <p className="text-sm text-blue-600">Add this as a new meal</p>
-                </div>
-              </div>
-            </button>
           )}
           {/* Extra padding at bottom for better scrolling */}
           <div className="h-4" />

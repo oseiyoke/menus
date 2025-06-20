@@ -35,16 +35,21 @@ export function MealSlot({ mealType, meal, onClick, className = '' }: MealSlotPr
     <div
       onClick={onClick}
       className={`
-        flex-1 min-h-[3rem] rounded-lg border-2 flex items-center justify-center 
-        text-xs font-medium cursor-pointer transition-all
+        flex-1 min-h-[4rem] rounded-lg border-2 flex items-center justify-center 
+        text-center cursor-pointer transition-all px-4 py-3
         ${getMealTypeColors()}
         ${className}
       `}
     >
-      <div className="text-center px-2">
-        <div className="font-medium text-lg">
-          {meal ? meal.name : mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+      <div className="text-center w-full">
+        <div className="font-semibold text-lg mb-1">
+          {meal ? meal.name : `Add ${mealType.charAt(0).toUpperCase() + mealType.slice(1)}`}
         </div>
+        {meal?.description && (
+          <div className="text-xs opacity-75 truncate">
+            {meal.description}
+          </div>
+        )}
       </div>
     </div>
   );

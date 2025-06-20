@@ -193,57 +193,59 @@ export function MenuBase({
 
       {/* Days Grid */}
       <div className="flex-1 p-4 max-w-full overflow-y-auto overscroll-contain">
-        <div className="space-y-3 max-w-full">
-          {currentWeekDays.filter((day): day is NonNullable<typeof day> => day !== null).map((day) => (
-            <div
-              key={day.dayIndex}
-              onClick={() => handleDayClick(day.dayIndex)}
-              className={`bg-white rounded-xl p-4 shadow-sm border border-primary-100 transition-all relative max-w-full ${
-                isReadOnly
-                  ? 'cursor-default' 
-                  : 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-primary-200'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3 relative">
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-gray-900 truncate">{day.dayName}</h3>
-                </div>
-                {showEditControls && onDeleteDay && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteDay(day.dayIndex);
-                    }}
-                    className="absolute top-0 right-0 w-6 h-6 bg-red-50 text-red-600 rounded-full flex items-center justify-center hover:bg-red-100 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              <div className="flex gap-2 max-w-full overflow-hidden">
-                {(['breakfast', 'lunch', 'dinner'] as MealType[]).map((mealType) => (
-                  <div
-                    key={mealType}
-                    className={`flex-1 h-10 rounded-lg flex items-center justify-center text-xs font-medium overflow-hidden border ${
-                      day.meals[mealType]
-                        ? getMealTypeColors(mealType).filled
-                        : 'bg-surface-100 text-gray-400 border-gray-200'
-                    }`}
-                  >
-                    <span className="truncate px-1">
-                      {day.meals[mealType]
-                        ? day.meals[mealType]!.name.length > 8 
-                          ? day.meals[mealType]!.name.substring(0, 8) + '...'
-                          : day.meals[mealType]!.name
-                        : mealType.charAt(0).toUpperCase()
-                      }
-                    </span>
+        <div className="w-full max-w-2xl mx-auto">
+          <div className="space-y-3 max-w-full">
+            {currentWeekDays.filter((day): day is NonNullable<typeof day> => day !== null).map((day) => (
+              <div
+                key={day.dayIndex}
+                onClick={() => handleDayClick(day.dayIndex)}
+                className={`bg-white rounded-xl p-4 shadow-sm border border-primary-100 transition-all relative max-w-full ${
+                  isReadOnly
+                    ? 'cursor-default' 
+                    : 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-primary-200'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3 relative">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-gray-900 truncate">{day.dayName}</h3>
                   </div>
-                ))}
+                  {showEditControls && onDeleteDay && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteDay(day.dayIndex);
+                      }}
+                      className="absolute top-0 right-0 w-6 h-6 bg-red-50 text-red-600 rounded-full flex items-center justify-center hover:bg-red-100 transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex gap-2 max-w-full overflow-hidden">
+                  {(['breakfast', 'lunch', 'dinner'] as MealType[]).map((mealType) => (
+                    <div
+                      key={mealType}
+                      className={`flex-1 h-10 rounded-lg flex items-center justify-center text-xs font-medium overflow-hidden border ${
+                        day.meals[mealType]
+                          ? getMealTypeColors(mealType).filled
+                          : 'bg-surface-100 text-gray-400 border-gray-200'
+                      }`}
+                    >
+                      <span className="truncate px-1">
+                        {day.meals[mealType]
+                          ? day.meals[mealType]!.name.length > 8 
+                            ? day.meals[mealType]!.name.substring(0, 8) + '...'
+                            : day.meals[mealType]!.name
+                          : mealType.charAt(0).toUpperCase()
+                        }
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

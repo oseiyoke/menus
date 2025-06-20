@@ -127,4 +127,38 @@
       min-height: 44px; /* Apple's recommended minimum tap target */
     }
   }
+
+  /* Responsive layout improvements */
+  .content-container {
+    width: 100%;
+    max-width: 768px; /* max-w-3xl equivalent */
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Responsive max-widths for different breakpoints */
+  @media (min-width: 640px) {
+    .content-container {
+      max-width: 640px; /* sm */
+    }
+  }
+
+  @media (min-width: 768px) {
+    .content-container {
+      max-width: 672px; /* md but slightly smaller for menu content */
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .content-container {
+      max-width: 768px; /* lg but constrained for better readability */
+    }
+  }
+
+  /* Prevent horizontal overflow on small screens */
+  .safe-area-padding {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
 } 
