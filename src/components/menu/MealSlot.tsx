@@ -42,7 +42,7 @@ export function MealSlot({ mealType, meal, onClick, className = '' }: MealSlotPr
       `}
     >
       <div className="text-center px-2">
-        <div className="font-medium">
+        <div className="font-medium text-lg">
           {meal ? meal.name : mealType.charAt(0).toUpperCase() + mealType.slice(1)}
         </div>
       </div>

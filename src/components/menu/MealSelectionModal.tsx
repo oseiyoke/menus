@@ -5,6 +5,7 @@ import { Plus } from 'lucide-react';
 import { useMeals, useCreateMeal } from '@/hooks/useMeals';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useKeyboardOffset } from '@/hooks/useKeyboardOffset';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import type { MealType, Meal } from '@/lib/types';
 
 interface MealSelectionModalProps {
@@ -26,6 +27,9 @@ export function MealSelectionModal({
   const createMealMutation = useCreateMeal();
 
   const keyboardOffset = useKeyboardOffset();
+
+  // Lock body scroll when modal is open
+  useBodyScrollLock(isOpen);
 
   // Reset search whenever the modal opens
   useEffect(() => {
@@ -63,14 +67,22 @@ export function MealSelectionModal({
         className="absolute inset-0 bg-black bg-opacity-30"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-full bg-white rounded-t-3xl flex flex-col overflow-hidden" style={{ maxHeight: `calc(60vh - ${keyboardOffset}px)` }}>
+      <div 
+        className="relative w-full max-w-full bg-white rounded-t-3xl flex flex-col overflow-hidden shadow-2xl"
+        style={{ 
+          maxHeight: keyboardOffset > 0 
+            ? `calc(100vh - ${keyboardOffset}px - 20px)` // 20px top margin when keyboard is visible
+            : '70vh', // Default height when no keyboard
+          minHeight: '300px' // Ensure minimum usable space
+        }}
+      >
         {/* Handle */}
-        <div className="flex justify-center p-3">
+        <div className="flex justify-center p-3 flex-shrink-0">
           <div className="w-12 h-1 bg-gray-300 rounded-full" />
         </div>
 
         {/* Header */}
-        <div className="px-4 pb-4 border-b border-gray-100">
+        <div className="px-4 pb-4 border-b border-gray-100 flex-shrink-0">
           <h2 className="text-lg font-semibold text-gray-900 capitalize">
             Select {mealType}
           </h2>
@@ -81,6 +93,8 @@ export function MealSelectionModal({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-4 py-2 bg-gray-100 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+              autoComplete="off"
+              inputMode="text"
             />
           </div>
         </div>
@@ -125,24 +139,26 @@ export function MealSelectionModal({
           )}
           {/* Create option always shown when user typed something */}
           {showCreateOption && (
-                    <button
-                      onClick={handleCreateMeal}
-                      disabled={createMealMutation.isPending}
-                      className="w-full p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors text-left group disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors shrink-0">
-                          <Plus className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="font-medium text-blue-900 truncate">
-                            {createMealMutation.isPending ? 'Creating...' : `Create "${searchTerm}"`}
-                          </h3>
-                          <p className="text-sm text-blue-600">Add this as a new meal</p>
-                        </div>
-                      </div>
-                    </button>
-                  )}
+            <button
+              onClick={handleCreateMeal}
+              disabled={createMealMutation.isPending}
+              className="w-full p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors shrink-0">
+                  <Plus className="w-4 h-4 text-blue-600" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-medium text-blue-900 truncate">
+                    {createMealMutation.isPending ? 'Creating...' : `Create "${searchTerm}"`}
+                  </h3>
+                  <p className="text-sm text-blue-600">Add this as a new meal</p>
+                </div>
+              </div>
+            </button>
+          )}
+          {/* Extra padding at bottom for better scrolling */}
+          <div className="h-4" />
         </div>
       </div>
     </div>

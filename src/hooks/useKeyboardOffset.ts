@@ -14,18 +14,31 @@ export function useKeyboardOffset() {
 
         if ('visualViewport' in window && window.visualViewport) {
           const vv = window.visualViewport;
-          const diff = window.innerHeight - vv.height - vv.offsetTop;
-          setOffset(diff > 0 ? diff : 0);
+          const windowHeight = window.innerHeight;
+          const viewportHeight = vv.height;
+          const offsetTop = vv.offsetTop || 0;
+          
+          // Calculate the difference, accounting for any offset
+          const diff = windowHeight - viewportHeight - offsetTop;
+          
+          // Only consider it an offset if it's significant (> 100px to avoid false positives)
+          setOffset(diff > 100 ? diff : 0);
         } else {
-          // Fallback: if viewport got smaller, guess the offset
-          const diff = window.innerHeight - document.documentElement.clientHeight;
-          setOffset(diff > 0 ? diff : 0);
+          // Fallback: if viewport got smaller significantly, guess the offset
+          const windowHeight = window.innerHeight;
+          const documentHeight = document.documentElement.clientHeight;
+          const diff = windowHeight - documentHeight;
+          
+          // Only consider significant differences to avoid false positives
+          setOffset(diff > 100 ? diff : 0);
         }
       } catch (e) {
         // noop – defensive coding for SSR/older browsers
+        setOffset(0);
       }
     };
 
+    // Initial computation
     computeOffset();
 
     // Attach listeners
@@ -33,14 +46,21 @@ export function useKeyboardOffset() {
       const vv = window.visualViewport;
       vv.addEventListener('resize', computeOffset);
       vv.addEventListener('scroll', computeOffset);
+      
       return () => {
         vv.removeEventListener('resize', computeOffset);
         vv.removeEventListener('scroll', computeOffset);
       };
     }
 
+    // Fallback for browsers without visual viewport support
     window.addEventListener('resize', computeOffset);
-    return () => window.removeEventListener('resize', computeOffset);
+    window.addEventListener('orientationchange', computeOffset);
+    
+    return () => {
+      window.removeEventListener('resize', computeOffset);
+      window.removeEventListener('orientationchange', computeOffset);
+    };
   }, []);
 
   return offset;
