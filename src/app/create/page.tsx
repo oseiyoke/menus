@@ -58,7 +58,7 @@ export default function CreateMenuPage() {
   const canContinue = step === 'period' ? selectedPeriod > 0 : menuName.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="h-[100dvh] bg-white flex flex-col">
       {/* Header */}
       <header className="flex items-center gap-4 p-5 border-b border-primary-100">
         <button 
@@ -82,7 +82,7 @@ export default function CreateMenuPage() {
       </header>
 
       {/* Content */}
-      <div className="flex-1 p-6 flex justify-center">
+      <div className="flex-1 p-6 flex justify-center overflow-y-auto">
         <div className="w-full max-w-md">
           {step === 'period' && (
             <div className="space-y-3 animate-in slide-in-from-right-5 duration-300">

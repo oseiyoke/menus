@@ -53,10 +53,13 @@ export function MenuBase({
 
   const { menuEntries: storeEntries } = useMenuStore();
 
+  // Memoise entries separately to keep reference stable when irrelevent parts of the store update
+  const memoisedEntries = useMemo(() => (menu.entries && menu.entries.length > 0) ? menu.entries : storeEntries, [menu.entries, storeEntries]);
+
   const { weekTabs, currentWeekDays } = useMemo(() => {
     const totalDays = menu.period_weeks * 7;
     const weeks = [];
-    const entries = (menu.entries && menu.entries.length > 0) ? menu.entries : storeEntries;
+    const entries = memoisedEntries;
     
     for (let w = 0; w < menu.period_weeks; w++) {
       weeks.push({
@@ -113,7 +116,7 @@ export function MenuBase({
       weekTabs: weeks,
       currentWeekDays: weekDays,
     };
-  }, [menu.entries, storeEntries, menu.period_weeks, currentWeek, menu.start_date]);
+  }, [memoisedEntries, menu.period_weeks, currentWeek, menu.start_date]);
 
   const genericDateRange = getGenericDateRange(menu.period_weeks);
 
@@ -189,7 +192,7 @@ export function MenuBase({
       </header>
 
       {/* Days Grid */}
-      <div className="flex-1 p-4 max-w-full">
+      <div className="flex-1 p-4 max-w-full overflow-y-auto overscroll-contain">
         <div className="space-y-3 max-w-full">
           {currentWeekDays.filter((day): day is NonNullable<typeof day> => day !== null).map((day) => (
             <div

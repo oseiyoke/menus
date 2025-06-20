@@ -7,19 +7,24 @@ import type { Menu, MenuEntry, CreateMenuData, UpdateMenuData } from '@/lib/type
 
 export function useOfflineMenu(menuId?: string) {
   const queryClient = useQueryClient();
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const safeIsOnline = () => (typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [isOffline, setIsOffline] = useState(!safeIsOnline());
 
   // Listen for online/offline events
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+    }
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+      }
     };
   }, []);
 
@@ -31,7 +36,7 @@ export function useOfflineMenu(menuId?: string) {
 
       try {
         // Try network first
-        if (navigator.onLine) {
+        if (safeIsOnline()) {
           const menu = await menuApi.getById(menuId);
           if (menu) {
             // Cache the result
@@ -61,7 +66,7 @@ export function useOfflineMenu(menuId?: string) {
 
       try {
         // Try network first
-        if (navigator.onLine) {
+        if (safeIsOnline()) {
           const entries = await menuApi.getMenuEntries(menuId);
           // Cache the result
           await offlineStorage.saveMenuEntries(entries);
@@ -84,7 +89,7 @@ export function useOfflineMenu(menuId?: string) {
   // Create menu mutation with offline support
   const createMenuMutation = useMutation({
     mutationFn: async (data: CreateMenuData) => {
-      if (navigator.onLine) {
+      if (safeIsOnline()) {
         try {
           const newMenu = await menuApi.create(data);
           await offlineStorage.saveMenu(newMenu);
@@ -108,7 +113,7 @@ export function useOfflineMenu(menuId?: string) {
   // Update menu mutation with offline support
   const updateMenuMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateMenuData }) => {
-      if (navigator.onLine) {
+      if (safeIsOnline()) {
         try {
           const updatedMenu = await menuApi.update(id, data);
           await offlineStorage.saveMenu(updatedMenu);
@@ -138,7 +143,7 @@ export function useOfflineMenu(menuId?: string) {
   // Upsert menu entry mutation with offline support
   const upsertMenuEntryMutation = useMutation({
     mutationFn: async (entry: Omit<MenuEntry, 'id' | 'created_at'>) => {
-      if (navigator.onLine) {
+      if (safeIsOnline()) {
         try {
           const savedEntry = await menuApi.upsertMenuEntry(entry);
           await offlineStorage.saveMenuEntries([savedEntry]);
@@ -168,7 +173,7 @@ export function useOfflineMenu(menuId?: string) {
   // Delete menu entry mutation with offline support
   const deleteMenuEntryMutation = useMutation({
     mutationFn: async ({ menuId, date, mealType }: { menuId: string; date: string; mealType: string }) => {
-      if (navigator.onLine) {
+      if (safeIsOnline()) {
         try {
           await menuApi.deleteMenuEntry(menuId, date, mealType);
           // Also remove from cache
@@ -215,18 +220,23 @@ export function useOfflineMenu(menuId?: string) {
 
 // Hook for getting menu by short ID with offline support
 export function useOfflineMenuByShortId(shortId?: string) {
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const safeIsOnline = () => (typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [isOffline, setIsOffline] = useState(!safeIsOnline());
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+    }
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+      }
     };
   }, []);
 
@@ -237,7 +247,7 @@ export function useOfflineMenuByShortId(shortId?: string) {
 
       try {
         // Try network first
-        if (navigator.onLine) {
+        if (safeIsOnline()) {
           const menu = await menuApi.getByShortId(shortId);
           if (menu) {
             // Cache the result

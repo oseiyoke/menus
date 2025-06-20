@@ -1,6 +1,6 @@
 import React from 'react';
 import './globals.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import { PWAProvider } from '@/components/pwa/PWAProvider';
@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   title: 'Menu Planner',
   description: 'Create and share meal plans effortlessly',
   manifest: '/manifest.json',
-  themeColor: '#22C55E',
 
   appleWebApp: {
     capable: true,
@@ -44,7 +43,10 @@ export const metadata: Metadata = {
       },
     ],
   },
+};
 
+export const viewport: Viewport = {
+  themeColor: '#22C55E',
 };
 
 export default function RootLayout({

@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { useMeals, useCreateMeal } from '@/hooks/useMeals';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useKeyboardOffset } from '@/hooks/useKeyboardOffset';
 import type { MealType, Meal } from '@/lib/types';
 
 interface MealSelectionModalProps {
@@ -19,8 +21,18 @@ export function MealSelectionModal({
   onSelectMeal 
 }: MealSelectionModalProps) {
   const [searchTerm, setSearchTerm] = useState('');
-  const { data: meals = [], isLoading } = useMeals(searchTerm);
+  const debouncedSearchTerm = useDebounce(searchTerm, 2000);
+  const { data: meals = [], isLoading } = useMeals(debouncedSearchTerm);
   const createMealMutation = useCreateMeal();
+
+  const keyboardOffset = useKeyboardOffset();
+
+  // Reset search whenever the modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setSearchTerm('');
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -37,6 +49,7 @@ export function MealSelectionModal({
       });
       
       onSelectMeal(newMeal);
+      setSearchTerm('');
     } catch (error) {
       console.error('Failed to create meal:', error);
     }
@@ -45,12 +58,12 @@ export function MealSelectionModal({
   const showCreateOption = searchTerm.trim().length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end">
+    <div className="fixed inset-0 z-50 flex items-end" style={{ paddingBottom: keyboardOffset }}>
       <div 
         className="absolute inset-0 bg-black bg-opacity-30"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-full bg-white rounded-t-3xl max-h-[60vh] flex flex-col overflow-hidden">
+      <div className="relative w-full max-w-full bg-white rounded-t-3xl flex flex-col overflow-hidden" style={{ maxHeight: `calc(60vh - ${keyboardOffset}px)` }}>
         {/* Handle */}
         <div className="flex justify-center p-3">
           <div className="w-12 h-1 bg-gray-300 rounded-full" />
@@ -90,7 +103,10 @@ export function MealSelectionModal({
                       {meals.map((meal) => (
                         <button
                           key={meal.id}
-                          onClick={() => onSelectMeal(meal)}
+                          onClick={() => {
+                            onSelectMeal(meal);
+                            setSearchTerm('');
+                          }}
                           className="w-full p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors text-left"
                         >
                           <h3 className="font-medium text-gray-900 mb-1 truncate">{meal.name}</h3>
