@@ -109,6 +109,22 @@
       /* Prevent iOS keyboard from pushing content up */
       position: relative;
     }
+    
+    /* Better input handling on iOS */
+    input[type="text"],
+    input[type="search"],
+    input[type="email"],
+    input[type="tel"] {
+      font-size: 16px !important; /* Prevents iOS zoom on focus */
+      -webkit-appearance: none;
+    }
+  }
+  
+  /* Safe area handling for modern devices */
+  @supports (padding: max(0px)) {
+    .safe-area-bottom {
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
   }
 
   /* Input focus improvements for mobile */
