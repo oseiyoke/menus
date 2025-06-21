@@ -1,6 +1,6 @@
 {
-  "name": "Menu Planner - Meal Planning Made Easy",
-  "short_name": "Menu Planner",
+  "name": "FoodMenu - Meal Planning Made Easy",
+  "short_name": "FoodMenu",
   "description": "Plan your meals for the week with ease. Create, organize, and share your menu in minutes.",
   "start_url": "/",
   "display": "standalone",

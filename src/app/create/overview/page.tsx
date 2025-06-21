@@ -190,16 +190,18 @@ export default function MenuOverviewPage() {
                 {(['breakfast', 'lunch', 'dinner'] as MealType[]).map((mealType) => (
                   <div
                     key={mealType}
-                    className={`flex-1 h-10 rounded-lg flex items-center justify-center text-xs font-medium overflow-hidden ${
+                    className={`flex-1 min-h-[3rem] rounded-lg flex items-center justify-center text-xs font-medium p-2 ${
                       day.meals[mealType]
                         ? 'bg-green-50 text-green-700'
                         : 'bg-gray-50 text-gray-400'
                     }`}
                   >
-                    {day.meals[mealType]
-                      ? day.meals[mealType]!.name.substring(0, 12) + '...'
-                      : mealType.charAt(0).toUpperCase()
-                    }
+                    <span className="text-center leading-tight">
+                      {day.meals[mealType]
+                        ? day.meals[mealType]!.name
+                        : mealType.charAt(0).toUpperCase()
+                      }
+                    </span>
                   </div>
                 ))}
               </div>
