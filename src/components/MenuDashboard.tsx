@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search, Filter, Download } from 'lucide-react';
 import { MenuCard } from './MenuCard';
 import { LocalMenu, useLocalMenus } from '@/hooks/useLocalMenus';
+import { ImportMenuModal } from '@/components/ImportMenuModal';
 
 interface MenuDashboardProps {
   menus: LocalMenu[];
@@ -13,7 +14,10 @@ export function MenuDashboard({ menus }: MenuDashboardProps) {
   const router = useRouter();
   const { updateLastAccessed } = useLocalMenus();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | '1' | '2' | '3' | '4'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<'all' | '1' | '2' | '3' | '4'>(
+    'all'
+  );
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const handleMenuAccess = (menu: LocalMenu) => {
     updateLastAccessed(menu.id);
@@ -47,6 +51,13 @@ export function MenuDashboard({ menus }: MenuDashboardProps) {
                 {menus.length} menu{menus.length !== 1 ? 's' : ''} created
               </p>
             </div>
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 border-2 border-gray-200 text-gray-700 rounded-lg hover:border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Import
+            </button>
           </div>
         </div>
       </header>
@@ -107,6 +118,9 @@ export function MenuDashboard({ menus }: MenuDashboardProps) {
           </div>
         )}
       </div>
+
+      {/* Import Modal */}
+      <ImportMenuModal isOpen={showImportModal} onClose={() => setShowImportModal(false)} />
     </div>
   );
 } 

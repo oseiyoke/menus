@@ -2,18 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { HelpCircle, X } from 'lucide-react';
+import { HelpCircle, X, Download } from 'lucide-react';
 import { useLocalMenus } from '@/hooks/useLocalMenus';
 import { MenuDashboard } from '@/components/MenuDashboard';
 import { usePWA } from '@/components/pwa/PWAProvider';
 import { CompactInstallPrompt } from '@/components/pwa/InstallPrompt';
 import { InstallGuideModal } from '@/components/pwa/InstallGuideModal';
-import { PWAStatus } from '@/components/PWAStatus';
+import { ImportMenuModal } from '@/components/ImportMenuModal';
 
 function LandingPage() {
   const { isInstalled, canInstall } = usePWA();
   const [showInstallGuide, setShowInstallGuide] = useState(false);
   const [showPersistentPrompt, setShowPersistentPrompt] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   useEffect(() => {
     // Check if user has dismissed the persistent prompt
@@ -64,6 +65,14 @@ function LandingPage() {
             <span className="text-accent-400">⭐</span>
             Discover Menus
           </Link>
+
+          <button 
+            onClick={() => setShowImportModal(true)}
+            className="flex w-full items-center justify-center px-8 py-3 border-2 border-gray-200 text-gray-600 font-medium rounded-xl hover:border-gray-300 hover:bg-gray-50 transform hover:-translate-y-0.5 transition-all duration-200 gap-2"
+          >
+            <Download className="w-4 h-4" />
+            Import Menu
+          </button>
         </div>
       </div>
 
@@ -130,6 +139,12 @@ function LandingPage() {
       <InstallGuideModal 
         isOpen={showInstallGuide} 
         onClose={() => setShowInstallGuide(false)} 
+      />
+
+      {/* Import Menu Modal */}
+      <ImportMenuModal 
+        isOpen={showImportModal} 
+        onClose={() => setShowImportModal(false)} 
       />
     </main>
   );
